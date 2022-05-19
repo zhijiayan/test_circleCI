@@ -1,8 +1,23 @@
-version: 2
+version: 2.1
+
 jobs:
-  build:
-    docker:
-      - image: circleci/node:10
+  bar:
+    machine:
+      image: ubuntu-2004:202107-02
     steps:
-      - run: echo "A first hello"
-      - run: npm -v
+      - checkout
+      - run:
+          command: echo "building"
+      - run:
+          command: echo "testing"
+
+workflows:
+  build:
+    jobs:
+      - bar:
+          pre-steps: # steps to run before steps defined in the job bar
+            - run:
+                command: echo "install custom dependency"
+          post-steps: # steps to run after steps defined in the job bar
+            - run:
+                command: echo "upload artifact to s3"
