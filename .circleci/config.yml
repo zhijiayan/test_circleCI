@@ -1,23 +1,24 @@
 version: 2.1
-
 jobs:
-  bar:
-    machine:
-      image: ubuntu-2004:202107-02
-    steps:
-      - checkout
-      - run:
-          command: echo "building"
-      - run:
-          command: echo "testing"
-
-workflows:
   build:
-    jobs:
-      - bar:
-          pre-steps: # steps to run before steps defined in the job bar
-            - run:
-                command: echo "install custom dependency"
-          post-steps: # steps to run after steps defined in the job bar
-            - run:
-                command: echo "upload artifact to s3"
+    docker:
+      - image: python:3.6.3-jessie
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+
+    working_directory: /tmp
+    steps:
+      - run:
+          name: Creating Dummy Artifacts
+          command: |
+            echo "my artifact file" > /tmp/artifact-1;
+            mkdir /tmp/artifacts;
+            echo "my artifact files in a dir" > /tmp/artifacts/artifact-2;
+
+      - store_artifacts:
+          path: /tmp/artifact-1
+          destination: artifact-file
+
+      - store_artifacts:
+          path: /tmp/artifacts
