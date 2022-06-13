@@ -5,8 +5,8 @@ workflows:
     jobs:
       - run-tests:
           context:
-            - org-global
-            - my-context
+            - Contest_test
+            #- my-context
 
 jobs:
   run-tests:
