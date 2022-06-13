@@ -1,24 +1,22 @@
 version: 2.1
+
+workflows:
+  my-workflow:
+    jobs:
+      - run-tests:
+          context:
+            - org-global
+            - my-context
+
 jobs:
-  build:
+  run-tests:
     docker:
-      - image: python:3.6.3-jessie
+      - image: cimg/base:2020.01
         auth:
           username: mydockerhub-user
           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-
-    working_directory: /tmp
     steps:
+      - checkout
       - run:
-          name: Creating Dummy Artifacts
-          command: |
-            echo "my artifact file" > /tmp/artifact-1;
-            mkdir /tmp/artifacts;
-            echo "my artifact files in a dir" > /tmp/artifacts/artifact-2;
-
-      - store_artifacts:
-          path: /tmp/artifact-1
-          destination: artifact-file
-
-      - store_artifacts:
-          path: /tmp/artifacts
+          name: "echo environment variables from org-global context"
+          command: echo $MY_ENV_VAR
