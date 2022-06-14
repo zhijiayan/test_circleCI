@@ -7,7 +7,8 @@ workflows:
     build-test-deploy:
       - build
       - test:
-          context: my-restricted-context
+          context: 
+            - my-restricted-context
           requires:
             - build
       - hold:
