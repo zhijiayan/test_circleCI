@@ -1,22 +1,22 @@
 version: 2.1
 
-workflows:
-  my-workflow:
-    jobs:
-      - run-tests:
-          context:
-            - Contest_test
-            #- my-context
+# Jobs declaration for build, test and deploy not displayed
 
-jobs:
-  run-tests:
-    docker:
-      - image: cimg/base:2020.01
-        auth:
-          username: mydockerhub-user
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-    steps:
-      - checkout
-      - run:
-          name: "echo environment variables from org-global context"
-          command: echo $MY_ENV_VAR
+workflows:
+  jobs:
+    build-test-deploy:
+      - build
+      - test:
+          context: my-restricted-context
+          requires:
+            - build
+      - hold:
+          type: approval # presents manual approval button in the UI
+          requires:
+            - build
+      - deploy:
+          context: deploy-key-restricted-context
+          requires:
+            - build
+            - hold
+            - test
